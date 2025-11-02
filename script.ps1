@@ -1,4 +1,4 @@
-Clear-Host
+cmd /c cls
 Write-Host "Incolla i risultati presi da WinPrefetchView"
 $lines = @()
 while ($true) {
@@ -61,4 +61,5 @@ foreach ($n in $notFound) {
     Write-Host $n -ForegroundColor Yellow
 }
 Write-Host " Developed by Orin144" -ForegroundColor Cyan
+
 
