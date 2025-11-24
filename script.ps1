@@ -1,4 +1,4 @@
-Write-Host "Paste the resuòts copied on WinPrefetchView"
+Write-Host "Paste the results copied on WinPrefetchView"
 $lines = @()
 while ($true) {
     $line = Read-Host
@@ -58,6 +58,7 @@ foreach ($n in $notFound) {
     Write-Host $n -ForegroundColor Yellow
 }
 Write-Host " Developed by Orin144" -ForegroundColor Cyan
+
 
 
 
