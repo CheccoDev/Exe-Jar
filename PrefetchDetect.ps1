@@ -1,5 +1,5 @@
 Clear-Host
-Write-Host "Incolla i risultati presi da WinPrefetchView"
+Write-Host "Paste the results copied on WinPrefetchView"
 $lines = @()
 while ($true) {
     $line = Read-Host
@@ -8,7 +8,6 @@ while ($true) {
 }
 Clear-Host
 
-# Array per separare i risultati
 $sicuri = @()
 $sospetti = @()
 $nonTrovati = @()
@@ -36,7 +35,6 @@ function Get-CheatReason {
     return $null
 }
 
-# Funzione per ottenere il sito dal Zone.Identifier
 function Get-ZoneIdentifier {
     param([string]$filePath)
     $ads = Get-Content -Raw -Stream Zone.Identifier $filePath -ErrorAction SilentlyContinue
@@ -46,7 +44,6 @@ function Get-ZoneIdentifier {
     return $null
 }
 
-# Elaborazione righe
 foreach ($line in $lines) {
     if ($line -match '([A-Z]:\\.+?)\\VOLUME') {
         $fullPath = $matches[1]
@@ -56,7 +53,6 @@ foreach ($line in $lines) {
             $nome = $item.Name
             $dir = $item.DirectoryName
 
-            # Controllo attributo di sistema e firma digitale
             $isSystemAttr = $item.Attributes -band [System.IO.FileAttributes]::System
             try {
                 $sig = Get-AuthenticodeSignature $fullPath
@@ -68,7 +64,6 @@ foreach ($line in $lines) {
                 $isJavaSigned = $false
             }
 
-            # File SICURI
             if ($isSystemAttr -or $isMicrosoftSigned -or $isJavaSigned) {
                 $sicuri += @{Name=$nome; Reason=""; Path=$dir; Link=""; Jar=$false}
             }
@@ -82,7 +77,6 @@ foreach ($line in $lines) {
                     $zoneId = Get-ZoneIdentifier $fullPath
                 }
 
-                # Se è un .jar con cheat rilevato o link presente => SOSPETTI
                 if ($reason -or $zoneId) {
                     if ($reason) { $r = $reason } else { $r = "--" }
                     if ($zoneId) { $l = $zoneId } else { $l = "" }
@@ -95,7 +89,6 @@ foreach ($line in $lines) {
                         Link = $l
                     }
                 }
-                # Se non è un jar e senza link => SOSPETTI generico
                 elseif (-not ($fullPath -match '\.jar$')) {
                     $sospetti += @{Name=$nome; Reason="--"; Path=$dir; Jar=$false; Link=""}
                 }
@@ -106,7 +99,6 @@ foreach ($line in $lines) {
     }
 }
 
-# Funzione per stampare colonne allineate
 function Print-Table {
     param($items, $color)
     if ($items.Count -eq 0) { return }
@@ -126,7 +118,6 @@ function Print-Table {
         $pathPadded = $item.Path.PadRight($maxPathLen + 2)
         $linkPadded = $item.Link.PadRight($maxLinkLen + 2)
 
-        # Nome sempre DarkRed per i sospetti
         if ($color -eq "Red") {
             Write-Host "> " -NoNewline
             Write-Host $namePadded -ForegroundColor DarkRed -NoNewline
@@ -136,16 +127,14 @@ function Print-Table {
         }
     }
 }
-# Stampa SICURI
-Write-Host "SICURI:" -ForegroundColor Green
+Write-Host "SAFE:" -ForegroundColor Green
 Print-Table $sicuri Green
 
-# Stampa SOSPETTI
-Write-Host "`nSOSPETTI:" -ForegroundColor Red
+Write-Host "`nSUSPECT:" -ForegroundColor Red
 Print-Table $sospetti Red
 
-# Stampa NON TROVATI
-Write-Host "`nNON TROVATI:" -ForegroundColor Yellow
+Write-Host "`nNOT FOUND:" -ForegroundColor Yellow
 Print-Table $nonTrovati Yellow
 
 Write-Host "`n Developed by Orin144" -ForegroundColor Cyan
+
