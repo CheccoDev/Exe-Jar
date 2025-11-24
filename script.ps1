@@ -1,4 +1,4 @@
-Write-Host "Incolla i risultati presi da WinPrefetchView"
+Write-Host "Paste the resuòts copied on WinPrefetchView"
 $lines = @()
 while ($true) {
     $line = Read-Host
@@ -7,7 +7,6 @@ while ($true) {
 }
 Clear-Host
 
-# Array per separare i risultati
 $recognized = @()
 $unrecognized = @()
 $notFound = @()
@@ -33,22 +32,21 @@ foreach ($line in $lines) {
 
             if ($isSystemAttr -or $isMicrosoftSigned -or $isJavaSigned) {
                 if ($isJavaSigned) {
-                    $recognized += "$fullPath -> Riconosciuto come file Java ($subject)"
+                    $recognized += "$fullPath -> Java file ($subject)"
                 } elseif ($isMicrosoftSigned) {
-                    $recognized += "$fullPath -> Riconosciuto come file Microsoft ($subject)"
+                    $recognized += "$fullPath -> Microsoft file ($subject)"
                 } else {
-                    $recognized += "$fullPath -> Riconosciuto come file di sistema"
+                    $recognized += "$fullPath -> File system"
                 }
             } else {
-                $unrecognized += "$fullPath -> Non riconosciuto come file di sistema"
+                $unrecognized += "$fullPath -> Unknown as file system"
             }
         } else {
-            $notFound += "$fullPath -> File non trovato"
+            $notFound += "$fullPath -> File not found"
         }
     }
 }
 
-# Stampa risultati
 foreach ($r in $recognized) {
     Write-Host $r -ForegroundColor Green
 }
@@ -60,6 +58,7 @@ foreach ($n in $notFound) {
     Write-Host $n -ForegroundColor Yellow
 }
 Write-Host " Developed by Orin144" -ForegroundColor Cyan
+
 
 
 
